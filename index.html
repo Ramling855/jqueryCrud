@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <div id="tata"></div>
+<h1></h1>
+<h2 class="g">headeer two</h2>
+<button class="click">click</button>
+<button id="newtutorBtn">new tutorial</button>
+<form  id="newform">
+    <label for="">name</label>
+<input type="text" class="form-control" id="name" placeholder="name">
+<label for="">surname</label>
+<input type="text" class="form-control" id="sname" placeholder="surname">
+<button id="submitbutton" type="submit">submit</button>
+</form>
+<div id="updateForm">
+
+    <form  id="newform1">
+        <label for="">name</label>
+    <input type="text" class="form1" id="name">
+    <label for="">surname</label>
+    <input type="text" class="form1" id="sname">
+    <button id="submitbutton1" type="submit">submit</button>
+    </form>
+    <table id="tutorialtable">
+<thead>
+    <th>sr.no</th>
+<th>name</th>
+<th>surname</th>
+<th>update</th>
+<th>delete</th>
+</thead>
+<tbody id="tutbody"></tbody>
+    </table>
+</div>
+    <script>
+
+
+    $('#tata').text('hello ramling'); 
+    $('h1').text('data') 
+    $(".click").click(function(){
+$("h2,h1,div").hide();
+    })
+///////////////
+
+gettut()
+    $("#newtutorBtn").on("click",function(e){
+$("#newform").toggle();
+    })
+
+function gettut(){
+$("#tutbody").html("")
+$.ajax({
+    url:"http://localhost:9000/read",
+    method:"get",
+    dataType:"json",
+    data:{
+        test:"test data"
+    },
+    
+    success:function(data){
+       /* $(data).each(function(i,ele){
+            var all=ele
+            $("#tutbody").append($("<tr>")
+                .append($("<td>").append(i))
+                .append($("<td>").append(ele.name))
+                    .append($("<td>").append(ele.sname))
+                        .append($(`<td class="btn">`).append(`<button class="btn" id="click">add</button>`))
+                    
+                        .append($("<td>").append(ele._id))
+                    )
+
+        })*/
+        var output="";
+if(data){
+    var x=data
+}else{
+    x=""
+}
+for(let i=0;i<x.length;i++){
+    console.log(x[i])
+    output+="<tr><td>"+x[i]._id+"</td><td>"+x[i].name+"</td><td>"
+        +x[i].sname+"</td><td><button class='edit' dataEdit="+ x[i]._id+">update</button></td><td><button class='del' dataDel="+ x[i]._id+">delete</button></td><tr>"
+}
+
+$("#tutbody").html(output)
+    }
+})
+}
+
+$("#tutbody").on("click" ,".del",function(data){
+  //  console.log(data)
+
+
+// let id=$(this).attr("dataEdit");
+let id=$(this).attr("dataDel");
+
+console.log(id)
+
+deletedata(id)
+
+
+
+})
+
+
+
+function deletedata(id){
+    gettut()
+    $.ajax({
+        url:'http://localhost:9000/delete/'+id,
+        method:"DELETE",
+        dataType:"json",
+        
+        success:function(){
+    console.log("deleted")
+    
+        }
+    })
+    
+    }
+
+    $("#tutbody").on("click" ,".edit",function(data){
+         console.log(data)
+         let id=$(this).attr("dataEdit");
+
+console.log(id,"update")
+updateData(id)
+    }     ) 
+
+
+    function updateData(id){
+        gettut()
+        $.ajax({
+            url:'http://localhost:9000/data/'+id,
+            method:"PUT",
+            dataType:"json",
+            data:{
+                name:"ramling",
+                sname:"survase"
+            },
+            success:function(){
+        console.log("deleted")
+        
+            }
+        })
+        
+        }
+
+
+
+
+
+
+$(".edit").click(function(){
+
+alert("clicked")
+})
+
+
+$("#submitbutton").on("click",function(e){
+    gettut()
+    e.preventDefault()
+   var name =  $("#name").val()
+   var sname =  $("#sname").val()
+    
+let data={
+    name:name,
+    sname:sname
+}
+console.log(data)
+postdata(data);
+
+
+})
+
+
+
+function postdata(data){
+    //console.log(all,"all")
+   // console.log(data,"data")
+$.ajax({
+    url:"http://localhost:9000/post",
+    method:"post",
+    dataType:"json",
+    data:data,
+    success:function(data){
+        console.log(data)
+        gettut();
+    }
+})
+}
+
+
+
+    </script>
+</body>
+</html>
